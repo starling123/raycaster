@@ -1,9 +1,9 @@
 var WIDTH = 1200;
 var HEIGHT = 400;
 var MAZESIZE = 1001;
-var UNIT = 1000;
+var UNIT = 100;
 var PI = Math.PI;
-var SPEED = 200;
+var SPEED = 20;
 
 var keyState = {};
 var wallTexture = [

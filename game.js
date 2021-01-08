@@ -1,9 +1,9 @@
-var WIDTH = 1200;
-var HEIGHT = 400;
+var WIDTH = 800;
+var HEIGHT = 600;
 var MAZESIZE = 1001;
-var UNIT = 1000;
+var UNIT = 255;
 var PI = Math.PI;
-var SPEED = 200;
+var SPEED = 50;
 
 var keyState = {};
 var wallTexture = [
@@ -14,26 +14,67 @@ var wallTexture = [
 	,[0,0,0,0,0,0,0,0]
 ];
 
+var textures = {};
+
 function inCirkel(x,y,r) {
 	x = x - r;
 	y = y - r;
 	return x*x + y*y < r*r;	
 }
 
-function run() {
-   let ag = document.getElementById("achtergrond").getContext("2d");
-   ag.fillStyle = "#0000CC";
-   ag.fillRect(0, 0, WIDTH, (0.6*HEIGHT)|0);
-   ag.fillStyle = "#333333";
-   ag.fillRect(0, (0.6*HEIGHT)|0, WIDTH, (0.6*HEIGHT)|0);
+function loadImage(url) {
+	let img = new Image();
+	img.src = url;
+	document.body.appendChild(img);
+	let canvas = document.createElement('canvas');
+	let w = img.naturalWidth;
+	let h = img.naturalHeight;
+	canvas.width = w;
+	canvas.height = h;
+	let ctx = canvas.getContext('2d');
+	ctx.drawImage(img, 0, 0, w, h);
+	let data = ctx.getImageData(0,0,w, h).data;
+	let texture = {width:w,height:h, data :[]};
+	for(let y=0; y < h;y++) {
+		
+		for(let x=0; x < w;x++) {
+			texture.data[x+y*w] = ctx.getImageData(x,y,1,1).data; 
+		}
+	}
+	
+	return texture;
+}
 
+function getTexturePixel(texture, x, y) {
+	try {
+		return texture.data[x%texture.width + (y%texture.height)*texture.width];
+	} catch(e) {
+		return [255,200,100,255];
+	}
+}
+
+function run() {
+   let ag = document.getElementById("achtergrond");
+   ag.width = WIDTH;
+   ag.height = HEIGHT;
+   let agCtx = ag.getContext("2d");
+
+   agCtx.fillStyle = "#0000CC";
+   agCtx.fillRect(0, 0, WIDTH, (0.6*HEIGHT)|0);
+   agCtx.fillStyle = "#333333";
+   agCtx.fillRect(0, (0.6*HEIGHT)|0, WIDTH, (0.6*HEIGHT)|0);
+   
+   textures.clock = loadImage("clock.jpg");   
+   textures.elisabeth = loadImage("water.jpeg");   
+   
    let rc = new RayCaster();
-   
-   let ctx = document.getElementById("screen").getContext("2d");
-   rc.renderMaze();
-   imageData = new ImageData(rc.buffer, WIDTH);
-   ctx.putImageData(imageData, 0,0);
-   
+   let c = document.createElement("canvas");
+   c.width = WIDTH;
+   c.height = HEIGHT;
+   let ctx = c.getContext("2d");
+   let screen = document.getElementById("screen");
+   let screenCtx = screen.getContext("2d");
+
    document.addEventListener('keydown', (event) => {
   		keyState[event.key] = true;
   	},false);
@@ -41,9 +82,8 @@ function run() {
    document.addEventListener('keyup', (event) => {
   		keyState[event.key] = false;
   	},false);
-
+    let update = true;
 	function gameLoop() {
-		let update = false;
 		if(keyState["ArrowRight"]) {
 			rc.rotate(-PI/64);
 			update = true;
@@ -60,11 +100,16 @@ function run() {
 			rc.move(-SPEED);
 			update = update || true;
 		}
-	   rc.renderMaze();
-	   imageData = new ImageData(rc.buffer, WIDTH);
-	   ctx.putImageData(imageData, 0,0);
-		
-		setTimeout(gameLoop, 10);
+	   if(update) {
+		   rc.renderMaze();
+		   imageData = new ImageData(rc.buffer, WIDTH);
+		   ctx.putImageData(imageData, 0,0);
+		   screenCtx.clearRect(0, 0, screen.width, screen.height);
+		   screenCtx.drawImage(ag,0,0,screen.width, screen.height);
+		   screenCtx.drawImage(c,0,0,screen.width, screen.height);
+           update = false;
+       }		
+	   setTimeout(gameLoop, 10);
 	}
 	gameLoop();
 
@@ -154,29 +199,33 @@ class RayCaster {
 					tx = (Math.abs(posx - hitr * UNIT))|0;
 				}
 								
-				tx = tx % 10;
+//				tx = tx % 10;
 				let ty = 0;
 				for(let i=0; i < projectHeight; i++) {
 					let sy = (screenMiddle - projectHeight/2 + i)|0;
 					if(sy >= 0 && sy < HEIGHT) {
 						ty = (i/scaling/50)|0;
-						ty = ty%10;
+//						ty = ty%10;
 						if(side % 2 == 0) {
-							if(tx < 20 && ty < 20) {
-								if(inCirkel(tx,ty,5)) {
-									this.setPixel(line, sy, 200,50,50,255);
-								} else {
-									this.setPixel(line, sy, 150,150,150,255);
-								}
-							}
+							let p = getTexturePixel(textures.clock, tx,ty);
+							this.setPixel(line, sy, p[0],p[1],p[2],p[3]);
+//							if(tx < 20 && ty < 20) {
+//								if(inCirkel(tx,ty,5)) {
+//									this.setPixel(line, sy, 200,50,50,255);
+//								} else {
+//									this.setPixel(line, sy, 150,150,150,255);
+//								}
+//							}
 						} else  {
-							if(tx < 20 && ty < 20) {
-								if(inCirkel(tx,ty,5)) {
-									this.setPixel(line, sy, 200,50,50,255);
-								} else {
-									this.setPixel(line, sy, 150,150,150,255);
-								}
-							}
+							let p = getTexturePixel(textures.elisabeth, tx,ty);
+							this.setPixel(line, sy, p[0],p[1],p[2],p[3]);
+//							if(tx < 20 && ty < 20) {
+//								if(inCirkel(tx,ty,5)) {
+//									this.setPixel(line, sy, 200,50,50,255);
+//								} else {
+//									this.setPixel(line, sy, 150,150,150,255);
+//								}
+//							}
 						}
 					}
 				}

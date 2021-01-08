@@ -65,7 +65,7 @@ function run() {
    agCtx.fillRect(0, (0.6*HEIGHT)|0, WIDTH, (0.6*HEIGHT)|0);
    
    textures.clock = loadImage("clock.jpg");   
-   textures.elisabeth = loadImage("water.jpeg");   
+   textures.water = loadImage("water.jpeg");   
    
    let rc = new RayCaster();
    let c = document.createElement("canvas");
@@ -217,7 +217,7 @@ class RayCaster {
 //								}
 //							}
 						} else  {
-							let p = getTexturePixel(textures.elisabeth, tx,ty);
+							let p = getTexturePixel(textures.water, tx,ty);
 							this.setPixel(line, sy, p[0],p[1],p[2],p[3]);
 //							if(tx < 20 && ty < 20) {
 //								if(inCirkel(tx,ty,5)) {

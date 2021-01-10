@@ -15,10 +15,10 @@ export function start() {
    agCtx.fillRect(0, 0.6*h, w, 0.4*h);
 
    let map = new MazeMap(1001, 150);
-   map.addTexture("water.jpeg");
-   map.addTexture("clock.jpg");
-   map.addTexture("wall.png");
-   map.addTexture("wall.png");
+   map.addTexture("/water.jpeg");
+   map.addTexture("/clock.jpg");
+   map.addTexture("/wall.png");
+   map.addTexture("/wall.png");
 
    let c = document.getElementById("screen");
    let rc = new RayCaster(map.width/2,map.height/2,map, w, h);

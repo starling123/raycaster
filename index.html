@@ -1,11 +1,21 @@
 <html>
 <head>
-<script type="text/javascript" src="game.js"></script>
+<script type="module">
+import {start} from "./game.js";
+start();
+</script>
+<style>
+img {
+	display: none; 
+}
+</style>
 </head>
-<body onload="run()" style="background-color:black">
-<canvas id="achtergrond" width="1200" height="400" style="position:absolute;top:0;left:0"></canvas>
-<canvas id="screen" style="width:100%;height:600;position:absolute;top:0;left:0"></canvas>
-<img id="clock" src="clock.jpg"></img>
-<img id="el" src="water.jpeg"></img>
+<body style="background-color:black">
+<canvas id="achtergrond" width="1600" height="400" style="width:1600;height:400;position:absolute;top:0;left:0"></canvas>
+<canvas id="screen"  width="1600" height="400" style="width:1600;height:400;position:absolute;top:0;left:0"></canvas>
+<img src="clock.jpg"></img>
+<img src="water.jpeg"></img>
+<img src="piano.jpg"></img>
+<img src="wall.png"></img>
 </body>
 </html>

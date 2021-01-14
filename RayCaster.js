@@ -34,7 +34,7 @@ export class RayCaster {
 	
 	renderLine(line) {
 		let angle = this.viewAngle-Math.atan2((line-this.width/2)/50, this.distanceToScreen);
-		let d = 0.5;
+		let d = 1.5;
 		let distance = 0.0;
 		let posx = this.viewerX;
 		let posy = this.viewerY;

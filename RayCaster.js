@@ -14,6 +14,7 @@ export class RayCaster {
 		this.width = width;
 		this.height = height;
 		this.distanceToScreen = 10;
+		this.screenMiddle = 0.5*this.height;
 		
    		let l = this.width*this.height*4;
 		this.buffer = new Uint8ClampedArray(l);
@@ -24,7 +25,8 @@ export class RayCaster {
 	}
 	
 	setPixel(x, y, color) {
-		let pos = (x + y * this.width)*4;
+		let y1 = this.height - y;
+		let pos = (x + y1 * this.width)*4;
 		for(let i=0;i<4;i++) {
 			this.buffer[pos+i] = color[i];
 		}
@@ -32,7 +34,7 @@ export class RayCaster {
 	
 	renderLine(line) {
 		let angle = this.viewAngle-Math.atan2((line-this.width/2)/50, this.distanceToScreen);
-		let d = 1.0;
+		let d = 0.5;
 		let distance = 0.0;
 		let posx = this.viewerX;
 		let posy = this.viewerY;
@@ -47,15 +49,27 @@ export class RayCaster {
 			if(hit) {
 				let scaling = this.distanceToScreen/(distance*Math.cos(angle-this.viewAngle) + this.distanceToScreen);
 				let projectHeight = 10000*scaling;
-				let screenMiddle = 0.6*this.height;
 				for(let i=0; i < projectHeight; i++) {
-					let sy = (screenMiddle - projectHeight/2 + i)|0;
+					let sy = (this.screenMiddle - projectHeight/2 + i)|0;
 					if(sy >= 0 && sy < this.height) {
 						let ty = (i/scaling/50)|0;
 						let color = this.map.getColor(ty);
 						this.setPixel(line, sy, color);
 					}
 				}
+			} else {
+				// floor
+				let floorColor = this.map.textures[4].getTexturePixel(posx,posy);
+				let ceilingColor = this.map.textures[5].getTexturePixel(posx,posy);
+				let scaling = this.distanceToScreen/(distance*Math.cos(angle-this.viewAngle) + this.distanceToScreen);
+				let projectHeight = 10000*scaling;
+				let sy = (this.screenMiddle - projectHeight/2 )|0;
+				if(sy >= 0 && sy < this.height) {
+					this.setPixel(line, sy, floorColor);
+					this.setPixel(line, this.height-sy, ceilingColor);
+				}
+				//ceiling
+				
 			}
 		}
 	}

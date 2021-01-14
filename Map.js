@@ -26,7 +26,9 @@ class Texture {
 
 	getTexturePixel(x, y) {
 		try {
-			return this.data[x%this.width + (y%this.height)*this.width];
+			let ty = y%this.height;
+			ty = this.height - ty -1;
+			return this.data[x%this.width + ty*this.width];
 		} catch(e) {
 			return [255,200,100,255];
 		}

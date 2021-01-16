@@ -1,10 +1,12 @@
 import { MazeMap } from "./Map.js";
 import { RayCaster } from "./RayCaster.js";
 
+
 var SPEED = 20;
 var keyState = {};
 
-export function start() {
+export async function start() {
+//   let r = await loadFile("/static/wall.png");
    let ag = document.getElementById("achtergrond");
    let agCtx = ag.getContext("2d");
    let w = ag.clientWidth;
@@ -14,13 +16,13 @@ export function start() {
    agCtx.fillStyle = "#333333";
    agCtx.fillRect(0, 0.6*h, w, 0.4*h);
 
-   let map = new MazeMap(1001, 150);
-   map.addTexture("/wall.png");
-   map.addTexture("/wall.png");
-   map.addTexture("/wall.png");
-   map.addTexture("/wall.png");
-   map.addTexture("/floor.png");
-   map.addTexture("/wood.png");
+   let map = new MazeMap(1001,1001, 150);
+   await map.addTexture("/static/wall.png");
+   await map.addTexture("/static/wall.png");
+   await map.addTexture("/static/wall.png");
+   await map.addTexture("/static/wall.png");
+   await map.addTexture("/static/floor.jpg");
+   await map.addTexture("/static/wood.jpg");
 
    let c = document.getElementById("screen");
    let rc = new RayCaster(map.width/2,map.height/2,map, w, h);

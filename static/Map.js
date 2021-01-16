@@ -1,8 +1,11 @@
+import { loadImage } from "./util.js";
+
 class Texture {
 	
-	constructor(url) {
-		let img = new Image();
-		img.src = url;
+	async load(url) {
+		let img = await loadImage(url);
+//		let img = new Image();
+//		img.src = url;
 //		document.body.appendChild(img);
 
 		let w = img.naturalWidth;
@@ -49,32 +52,39 @@ export class Map {
 //----------------------------------------------------------------------
 export class MazeMap extends Map {
 	
-	constructor(size, unit) {
+	constructor(r, c, unit) {
 		super();
 		this.textures = [];
-		this.size = size;
 		this.unit = unit;
-		this.width = this.size*unit;
-		this.height = this.size*unit;
+		this.rows = r;
+		this.cols = c;
+		this.width = this.cols*unit;
+		this.height = this.rows*unit;
 		this.maze = [];
 
-		for(let c=0; c < this.size; c++) {
-			this.maze[c] = []; 
-			for(let r=0; r < this.size; r++) {
-				this.maze[c][r] = Math.random() < 0.3?0:-1;
+		for(let r=0; r < this.rows; r++) {
+			this.maze[r] = []; 
+			for(let c=0; c < this.cols; c++) {
+				this.maze[r][c] = Math.random() < 0.3?0:-1;
 			}
 		}
 		
-		this.maze[(this.size/2)|0][(this.size/2)|0] = -1;
-		this.maze[(this.size/2)|0][(this.size/2+2)|0] = 0;
+		this.maze[(this.rows/2)|0][(this.cols/2)|0] = -1;
+		this.maze[(this.rows/2)|0][(this.cols/2+2)|0] = 0;
+	}
+	
+	async loadMap(url) {
+		let data = fetch(url);
+		console.log(data) ;
 	}
 	
 	containsPoint(x,y) {
 		return x >= 0 && x < this.width && y >= 0 && y < this.height;
 	}
 
-	addTexture(url) {
-		let t = new Texture(url);
+	async addTexture(url) {
+		let t = new Texture();
+		await t.load(url);
 		this.textures.push(t);
 	}
 		

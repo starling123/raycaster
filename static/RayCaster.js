@@ -28,7 +28,7 @@ export class RayCaster {
 		let y1 = this.height - y;
 		let pos = (x + y1 * this.width)*4;
 		for(let i=0;i<4;i++) {
-			this.buffer[pos+i] = color[i];
+			if(color) this.buffer[pos+i] = color[i];
 		}
 	}
 	

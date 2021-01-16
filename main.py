@@ -1,7 +1,14 @@
-import os
-from http.server import HTTPServer, CGIHTTPRequestHandler# Make sure the server is created at current directory
-os.chdir('.')
-# Create server object listening the port 80
-server_object = HTTPServer(server_address=('', 8000), RequestHandlerClass=CGIHTTPRequestHandler)
-# Start the web server
-server_object.serve_forever()
+from flask import Flask
+import flask
+from flask import render_template
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+# if "__name__" == "__main__":
+app.run()

@@ -16,7 +16,8 @@ export async function start() {
    agCtx.fillStyle = "#333333";
    agCtx.fillRect(0, 0.6*h, w, 0.4*h);
 
-   let map = new MazeMap(1001,1001, 150);
+   let map = new MazeMap(1,1, 150);
+   await map.load("/static/map_data.txt")
    await map.addTexture("/static/wall.png");
    await map.addTexture("/static/wall.png");
    await map.addTexture("/static/wall.png");

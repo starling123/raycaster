@@ -1,4 +1,4 @@
-import { loadImage } from "./util.js";
+import { loadFile, loadImage } from "./util.js";
 
 class Texture {
 	
@@ -73,9 +73,28 @@ export class MazeMap extends Map {
 		this.maze[(this.rows/2)|0][(this.cols/2+2)|0] = 0;
 	}
 	
-	async loadMap(url) {
-		let data = fetch(url);
-		console.log(data) ;
+	async load(url) {
+		let data = await loadFile(url);
+		this.maze = [];
+		let row = [];
+		for(let i=0; i < data.byteLength; i++) {
+			switch(data[i]) {
+			case 32: row.push(-1);break;
+			case 10: 
+				this.maze.push(row);
+			  	row = [];
+	          	break;
+			default:
+				row.push(0);
+			}
+		}
+		if(row.length > 0) {
+			this.maze.push(row);
+		}
+		this.rows = this.maze.length;
+		this.cols = this.maze[0].length;
+		this.width = this.cols*this.unit;
+		this.height = this.rows*this.unit;
 	}
 	
 	containsPoint(x,y) {

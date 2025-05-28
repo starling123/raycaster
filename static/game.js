@@ -21,7 +21,7 @@ export async function start() {
    await map.addTexture("/static/wall.png");
    await map.addTexture("/static/wall.png");
    await map.addTexture("/static/wall.png");
-   await map.addTexture("/static/wall.png");
+   await map.addTexture("/static/clock.jpg");
    await map.addTexture("/static/floor.jpg");
    await map.addTexture("/static/wood.jpg");
 
